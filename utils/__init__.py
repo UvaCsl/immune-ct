@@ -11,4 +11,5 @@ from .utils import (
     do_ews_ch,
     do_ar,
     do_ews_ar,
+    plot,
 )

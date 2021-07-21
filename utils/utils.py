@@ -55,6 +55,8 @@ def get_ch(dataset, time):
     df[f'LOG_'] = np.log(dataset)
     df.replace([np.inf, -np.inf], np.nan, inplace=True)
     df = df.dropna()
+    if df.empty:
+        return np.nan
     expr = f'LOG_ ~ Time'
     y, X = dmatrices(expr, df, return_type='dataframe')
     olsr_results = smf.ols(expr, df).fit()
@@ -67,10 +69,61 @@ def do_ews_ch(dataset, time, win_size):
     return dataset.rolling(int(win_size)).apply(get_ch, args =(time,) )
 
 def do_ar(dataset, lag=1):
-    model = AutoReg(dataset, lags=lag)
-    model_fit = model.fit()
-    return model_fit.params[1]
+    try:
+        model = AutoReg(dataset, lags=lag)
+        model_fit = model.fit()
+        return model_fit.params[1]
+    except Exception as e: 
+        print(f"Warning: {e}")
+        return np.nan
 
 def do_ews_ar(dataset, time, win_size, lag=1):
     return dataset.rolling(int(win_size)).apply(do_ar)
 
+def plot(data,
+         immune,
+         noise_name,
+         immune_name,
+         method_name,
+         method,
+         win_size,
+         time='Time',
+         nrows=2,
+         log=False,
+         w=6,
+         supfs = 18,
+         res_color= 'red'):
+    diff = pd.DataFrame(difference(data[immune]))
+    if log:
+        nrows = 3
+        w = 7
+
+    fig, axes = plt.subplots(nrows=nrows, ncols=2, figsize=(w, 5))
+    fig.suptitle(noise_name + ' : ' + immune_name, fontsize=supfs)
+
+    axes[0, 0].plot(data[immune])
+    axes[0, 0].set_title("Data")
+    axes[0, 0].set_xlabel("Timestep")
+
+    axes[0, 1].plot(diff)
+    axes[0, 1].set_title("Residuals")
+    axes[0, 1].set_xlabel("Timestep")
+
+    axes[1, 0].plot(method(data[immune], data[time], win_size), color=res_color)
+    axes[1, 0].set_title(method_name + " on Data")
+    axes[1, 0].set_xlabel("Timestep")
+
+    axes[1, 1].plot(method(diff, data[time], win_size), color=res_color)
+    axes[1, 1].set_title(method_name + " on Residuals")
+    axes[1, 1].set_xlabel("Timestep")
+
+    if log:
+        axes[2, 0].plot(method(np.log10(data[immune]), data[time], win_size))
+        axes[2, 0].set_title("Log Data")
+        axes[2, 0].set_xlabel("Timestep")
+
+        axes[2, 1].plot(method(np.log10(diff), data[time], win_size), color=res_color)
+        axes[2, 1].set_title(method_name + " on Log Residuals")
+        axes[2, 1].set_xlabel("Timestep")
+
+    fig.tight_layout()
