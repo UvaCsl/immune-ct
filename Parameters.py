@@ -198,14 +198,14 @@ ITMtrans0 = 0
 
 
 pred_fle = 'results/ITM0AP.txt'
-cyto_fle = 'datasets/cytokines.txt'
+cyto_fle = '../datasets/cytokines.txt'
 
-sample_fle = 'datasets/sample.txt'
-trt_fle = 'datasets/segregation.txt'
-AP_fle = 'datasets/Median_AlkFosf.csv'
-german_hospital_file = 'datasets/Hospital2.txt'
-dutch_hospital_file = 'datasets/Hospital1.txt'
-treatment_file = 'datasets/segregation.txt'
+sample_fle = '../datasets/sample.txt'
+trt_fle = '../datasets/segregation.txt'
+AP_fle = '../datasets/Median_AlkFosf.csv'
+german_hospital_file = '../datasets/Hospital2.txt'
+dutch_hospital_file = '../datasets/Hospital1.txt'
+treatment_file = '../datasets/segregation.txt'
 
 
 def get_params(innate, p0):
