@@ -7,6 +7,8 @@ import matplotlib.pyplot as plt
 import statsmodels.api as sm
 import statsmodels.formula.api as smf
 
+import pymannkendall as mk
+
 from statsmodels.stats.diagnostic import het_white
 from statsmodels.compat import lzip
 from patsy import dmatrices
@@ -80,6 +82,19 @@ def do_ar(dataset, lag=1):
 def do_ews_ar(dataset, time, win_size, lag=1):
     return dataset.rolling(int(win_size)).apply(do_ar)
 
+def do_mann_kendall(noise_name, to_test, ts_name):
+    ml_result = mk.original_test(to_test)
+    
+    print (f'{noise_name} Mann Kendall Test Results: {ts_name}')
+    print ('-------------------------')
+    print(f'Trend : {ml_result.trend}')
+    print(f'h : {ml_result.h}')
+    print(f'p : {ml_result.p}')
+    print(f'Tau : {ml_result.Tau}')
+    print(f'Slope : {ml_result.slope}')
+    print(' ')
+    print(' ')
+
 def plot(data,
          immune,
          noise_name,
@@ -93,13 +108,24 @@ def plot(data,
          w=6,
          supfs = 18,
          res_color= 'red'):
+    
+    df = data.dropna().reset_index()
     diff = pd.DataFrame(difference(data[immune]))
+    
+    orig = method(data[immune], data[time], win_size)
+    resid = method(diff, data[time], win_size)
+    
+    do_mann_kendall(noise_name, orig, "Original")
+    do_mann_kendall(noise_name, resid, "Residual")
+    
+    
     if log:
         nrows = 3
         w = 7
 
     fig, axes = plt.subplots(nrows=nrows, ncols=2, figsize=(w, 5))
     fig.suptitle(noise_name + ' : ' + immune_name, fontsize=supfs)
+ 
 
     axes[0, 0].plot(data[immune])
     axes[0, 0].set_title("Data")
@@ -109,11 +135,11 @@ def plot(data,
     axes[0, 1].set_title("Residuals")
     axes[0, 1].set_xlabel("Timestep")
 
-    axes[1, 0].plot(method(data[immune], data[time], win_size), color=res_color)
+    axes[1, 0].plot(orig, color=res_color)
     axes[1, 0].set_title(method_name + " on Data")
     axes[1, 0].set_xlabel("Timestep")
 
-    axes[1, 1].plot(method(diff, data[time], win_size), color=res_color)
+    axes[1, 1].plot(resid, color=res_color)
     axes[1, 1].set_title(method_name + " on Residuals")
     axes[1, 1].set_xlabel("Timestep")
 
@@ -127,3 +153,6 @@ def plot(data,
         axes[2, 1].set_xlabel("Timestep")
 
     fig.tight_layout()
+    
+    
+    
