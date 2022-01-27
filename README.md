@@ -24,3 +24,6 @@ The science happens in the notebooks. Below is a short list and description of e
 7. `Part II - Stochastic Immunity (On-Off).ipynb` : explores switching off/probability of nonproduction of certain concentrations
 9. `Part III - EWS.ipynb` : code for early warning signals
 10. `Part IV - EWS on Data.ipynb` : explores early warning signals on data
+
+## References
+1. Detecting Critical Transitions in the Human Innate Immune System Post-cardiac Surgery [https://www.ncbi.nlm.nih.gov/pmc/articles/PMC7302275/]
