@@ -4,6 +4,18 @@
 Critical transitions refer to sudden or abrupt shifts in the state of complex dynamical systems that happens when certain conditions of the system pass through a critical or bifurcation point. In this section of the report, we investigate if critical transitions also occur in the human innate immune system. By using the baseline model of the innate immunity for patients undergoing cardiac surgery, we perturb the system by adding stochasticity to the concentration of inflammation triggering moieties by introducing various types of noise. We then use Early Warning Signals to detect critical transitions in the stochastic human innate immune system. 
 
 
+## Set-up
+
+1. Clone this repository to your local
+```
+git clone git@github.com:UvaCsl/immune-ct.git
+```
+2. Create an environment named `immune` using the `requirements.txt` file
+
+```
+conda create --name <env> --file requirements.txt
+```
+
 ## Files Included
 
 The repository contains 6 folders: 
